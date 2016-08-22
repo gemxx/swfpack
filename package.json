@@ -1,7 +1,7 @@
 {
   "name": "swf_converter",
   "version": "1.0.0",
-  "description": "A tool to convert swf fomat between uncompressed/zlib/lzma",
+  "description": "The tool to convert swf fomat between uncompressed/zlib/lzma",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -22,5 +22,8 @@
   "bugs": {
     "url": "https://github.com/gemxx/swf_converter/issues"
   },
-  "homepage": "https://github.com/gemxx/swf_converter#readme"
+  "homepage": "https://github.com/gemxx/swf_converter#readme",
+  "dependencies": {
+    "lzma": "^2.3.2"
+  }
 }

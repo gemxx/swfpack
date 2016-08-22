@@ -35,7 +35,7 @@ Swf.prototype = {
     /**
      * parse swf.
      */
-    parse: function () {
+    parse: function() {
         var swf_buf = this.buffer;
         var signature = '';
 
@@ -76,12 +76,13 @@ Swf.prototype = {
         this.fwsBuffer = Buffer.concat([this.buffer.slice(0, 8), this.uncompressed]); // FWS Buffer.
 
     },
-    check: function () {
+    check: function() {
         if (this.fwsBuffer.length !== this.filelength) {
             exit('swf file length check failed!');
         }
     },
-    zip: function (sign) {
+    zip: function(options) {
+        var sign = options.signature;
         var output;
         var headers = this.fwsBuffer.slice(0, 8); // copy header.
         headers.writeUInt32LE(this.fwsBuffer.length, 4);
@@ -113,24 +114,27 @@ Swf.prototype = {
 };
 
 
-module.exports = function converter(swfPath, mode) {
-    if (!fs.existsSync(swfPath)) {
-        return;
-    }
-
-    var swf_bytes_buf = fs.readFileSync(swfPath);
-    var swf = new Swf(swf_bytes_buf);
-    var modes = {
-        'fws': 0,
+module.exports = function(swfPath, mode, level) {
+    var swf_bytes_buf;
+    var swf_modes = {
         'zlib': 1,
         'lzma': 2
     };
 
+    if (Buffer.isBuffer(swfPath)) {
+        swf_bytes_buf = swfPath;
+    } else if (fs.existsSync(swfPath)) {
+        swf_bytes_buf = fs.readFileSync(swfPath);
+    } else {
+        return exit('pls specify "swfPath" parameter!');;
+    }
+
+    var swf = new Swf(swf_bytes_buf);
     swf.parse();
     swf.check();
 
-    if (fs.existsSync(swfPath)) {
-        fs.unlinkSync(swfPath);
-    }
-    fs.writeFileSync(swfPath, swf.zip(modes[mode]));
+    return swf.zip({
+        'signature': swf_modes[mode] || 0,
+        'level': level || 7
+    });
 };
