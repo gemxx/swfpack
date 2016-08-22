@@ -114,6 +114,13 @@ Swf.prototype = {
 };
 
 
+/**
+ *
+ * @param swfPath
+ * @param mode
+ * @param level
+ * @returns <Buffer>
+ */
 module.exports = function(swfPath, mode, level) {
     var swf_bytes_buf;
     var swf_modes = {
@@ -126,7 +133,7 @@ module.exports = function(swfPath, mode, level) {
     } else if (fs.existsSync(swfPath)) {
         swf_bytes_buf = fs.readFileSync(swfPath);
     } else {
-        return exit('pls specify "swfPath" parameter!');;
+        return exit('pls specify "swfPath" parameter!');
     }
 
     var swf = new Swf(swf_bytes_buf);
