@@ -1,0 +1,26 @@
+{
+  "name": "swf_converter",
+  "version": "1.0.0",
+  "description": "A tool to convert swf fomat between uncompressed/zlib/lzma",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gemxx/swf_converter.git"
+  },
+  "keywords": [
+    "swf",
+    "zlib",
+    "lzma",
+    "compress",
+    "uncompress"
+  ],
+  "author": "gemstone",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gemxx/swf_converter/issues"
+  },
+  "homepage": "https://github.com/gemxx/swf_converter#readme"
+}
