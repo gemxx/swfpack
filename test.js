@@ -1,16 +1,19 @@
 /* jshint node:true, esnext:true */
 'use strict';
 
-const swf_converter = require('./index');
+const fs = require('fs');
+const swfpack = require('./index');
 
-const basePath = 'C:/Users/Administrator.QIYI--20160310A/Desktop/lzma/';
-const iqiyi_lzma = basePath + 'lzma.swf';
-const iqiyi = basePath + 'iqiyi.swf';
-
-swf_converter(iqiyi, 'lzma');
-// swf_converter(iqiyi, 'lzma');
+const targetPath = __dirname + 'iqiyi.swf';
+const destPath = __dirname + 'iqiyi.swf';
 
 
-console.log(swf_converter(iqiyi));
-console.log(swf_converter(iqiyi, 'zlib'));
-console.log(swf_converter(iqiyi, 'lzma'));
+
+var converter = new swfpack(targetPath);
+var packed = converter.pack('lzma', 7);
+
+if (fs.existsSync(destPath)) {
+    fs.unlinkSync(destPath);
+}
+fs.writeFileSync(destPath, packed);
+

@@ -1,14 +1,14 @@
 {
-  "name": "swf_converter",
+  "name": "swfpack",
   "version": "1.0.0",
-  "description": "The tool to convert swf fomat between uncompressed/zlib/lzma",
+  "description": "The tool to convert swf format between uncompressed/zlib/lzma.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gemxx/swf_converter.git"
+    "url": "git+https://github.com/gemxx/swfpack.git"
   },
   "keywords": [
     "swf",
@@ -20,9 +20,9 @@
   "author": "gemstone",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/gemxx/swf_converter/issues"
+    "url": "https://github.com/gemxx/swfpack/issues"
   },
-  "homepage": "https://github.com/gemxx/swf_converter#readme",
+  "homepage": "https://github.com/gemxx/swfpack#readme",
   "dependencies": {
     "lzma": "^2.3.2"
   }

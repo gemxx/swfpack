@@ -24,11 +24,24 @@ function exit(message) {
 /**
  * Swf Description.
  * @constructor
- * @param <Uint8Array> buffer
+ * @param <Uint8Array|string> buffer
  */
 function Swf(buffer) {
-    this.buffer = buffer;
+    var swf_bytes_buf;
+
+    if (Buffer.isBuffer(buffer)) {
+        swf_bytes_buf = buffer;
+    } else if (fs.existsSync(swfPath)) {
+        swf_bytes_buf = fs.readFileSync(buffer);
+    } else {
+        return exit('pls specify "swfPath" parameter!');
+    }
+
+    this.buffer = swf_bytes_buf;
     this.lzma_mode = 7;
+
+    this.parse();
+    this.check();
 }
 
 Swf.prototype = {
@@ -81,7 +94,15 @@ Swf.prototype = {
             exit('swf file length check failed!');
         }
     },
-    zip: function(options) {
+    pack: function(mode, level) {
+        var swf_modes = {
+            'zlib': 1,
+            'lzma': 2
+        };
+        var options = {
+            'signature': swf_modes[mode] || 0,
+            'level': level || 7
+        };
         var sign = options.signature;
         var output;
         var headers = this.fwsBuffer.slice(0, 8); // copy header.
@@ -113,35 +134,4 @@ Swf.prototype = {
     }
 };
 
-
-/**
- *
- * @param swfPath
- * @param mode
- * @param level
- * @returns <Buffer>
- */
-module.exports = function(swfPath, mode, level) {
-    var swf_bytes_buf;
-    var swf_modes = {
-        'zlib': 1,
-        'lzma': 2
-    };
-
-    if (Buffer.isBuffer(swfPath)) {
-        swf_bytes_buf = swfPath;
-    } else if (fs.existsSync(swfPath)) {
-        swf_bytes_buf = fs.readFileSync(swfPath);
-    } else {
-        return exit('pls specify "swfPath" parameter!');
-    }
-
-    var swf = new Swf(swf_bytes_buf);
-    swf.parse();
-    swf.check();
-
-    return swf.zip({
-        'signature': swf_modes[mode] || 0,
-        'level': level || 7
-    });
-};
+module.exports = Swf;
