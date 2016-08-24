@@ -31,7 +31,7 @@ function Swf(buffer) {
 
     if (Buffer.isBuffer(buffer)) {
         swf_bytes_buf = buffer;
-    } else if (fs.existsSync(swfPath)) {
+    } else if (fs.existsSync(buffer)) {
         swf_bytes_buf = fs.readFileSync(buffer);
     } else {
         return exit('pls specify "swfPath" parameter!');
@@ -95,12 +95,13 @@ Swf.prototype = {
         }
     },
     pack: function(mode, level) {
-        var swf_modes = {
-            'zlib': 1,
-            'lzma': 2
+        var swf_formats = {
+            'fws': 0,
+            'cws': 1,
+            'zws': 2
         };
         var options = {
-            'signature': swf_modes[mode] || 0,
+            'signature': swf_formats[mode] || 0,
             'level': level || 7
         };
         var sign = options.signature;

@@ -1,4 +1,9 @@
-# swf_converter
-A tool to convert swf fomat between uncompressed/zlib/lzma
+# swfpack
+The tool to convert swf format between uncompressed/zlib/lzma.
 
 # Usage
+var converter = new swfpack(targetPath); // targetPath: buffer|absolute_path
+var buffer_fws = converter.pack('fws'); // fws (uncompressed)
+var buffer_cws = converter.pack('cws'); // cws (compressed by using the ZLIB open standard)
+var buffer_zws = converter.pack('zws', 7); // lzma, lzmalevel(1-9)
+
