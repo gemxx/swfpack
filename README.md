@@ -2,7 +2,7 @@
 Swfpack is a tool that convert swf format between uncompressed/zlib/lzma.
 
 # Installation
-    $ npm install easy-zip
+    $ npm install swfpack
 
 # Usage
 ````
