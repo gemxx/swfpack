@@ -1,6 +1,6 @@
 {
   "name": "swfpack",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "The tool to convert swf format between uncompressed/zlib/lzma.",
   "main": "index.js",
   "scripts": {
