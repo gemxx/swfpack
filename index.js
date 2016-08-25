@@ -40,15 +40,15 @@ function Swf(buffer) {
     this.buffer = swf_bytes_buf;
     this.lzma_mode = 7;
 
-    this.parse();
-    this.check();
+    this._parse();
+    this._check();
 }
 
 Swf.prototype = {
     /**
      * parse swf.
      */
-    parse: function() {
+    _parse: function() {
         var swf_buf = this.buffer;
         var signature = '';
 
@@ -89,7 +89,7 @@ Swf.prototype = {
         this.fwsBuffer = Buffer.concat([this.buffer.slice(0, 8), this.uncompressed]); // FWS Buffer.
 
     },
-    check: function() {
+    _check: function() {
         if (this.fwsBuffer.length !== this.filelength) {
             exit('swf file length check failed!');
         }
