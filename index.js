@@ -14,7 +14,7 @@ function exit(message) {
     var code = 0;
     if (message) {
         code = 1;
-        console.error(message);
+        console.error('[swfpack] ' + message);
     }
 
     process.exit(code);
