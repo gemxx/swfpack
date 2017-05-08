@@ -119,7 +119,7 @@ Swf.prototype = {
                 output = Buffer.concat([headers, zlib.deflateSync(this.uncompressed, {finishFlush: zlib.Z_SYNC_FLUSH})]);
                 break;
             case 2:
-                /**
+                /*
                  * Format of LZMA SWF
                  *
                  * +-----------------+-----------+---------------+------------+-----------+-----------------+
@@ -141,9 +141,10 @@ Swf.prototype = {
                 headers.writeUInt32LE(this.fwsBuffer.length + 8, 4);
 
                 var lzmaBuffer = new Buffer(lzma.compress(this.uncompressed, this.lzma_mode));
+                var lzmaProps = lzmaBuffer.slice(0, 5);
                 headers.writeUInt32LE(lzmaBuffer.length - 13, 8);
 
-                output = Buffer.concat([headers, lzmaBuffer.slice(0, 5), lzmaBuffer.slice(13)]);
+                output = Buffer.concat([headers, lzmaProps, lzmaBuffer.slice(13)]);
                 break;
         }
 
