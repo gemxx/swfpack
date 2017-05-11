@@ -20,6 +20,9 @@ function exit(message) {
     process.exit(code);
 }
 
+function strfcc(code) {
+    return String.fromCharCode(code);
+}
 
 /**
  * Swf Description.
@@ -38,7 +41,7 @@ function Swf(buffer) {
     }
 
     this.buffer = swf_bytes_buf;
-    this.lzma_mode = 7;
+    this.level = 7;
 
     this._parse();
     this._check();
@@ -52,41 +55,43 @@ Swf.prototype = {
         var swf_buf = this.buffer;
         var signature = '';
 
-        function strfcc(code) {
-            return String.fromCharCode(code);
+        if (strfcc(swf_buf[1]) !== 'W' && strfcc(swf_buf[2]) !== 'S') {
+            exit('not a swf file - WS Fail!');
         }
 
         switch (strfcc(swf_buf[0])) {
             case 'F':
-                // swf uncompressed.
+                // 70: swf uncompressed.
                 signature = 0;
 
-                this.uncompressed = swf_buf.slice(8);
+                this.ddata = swf_buf.slice(8);
                 break;
             case 'C':
-                // swf compressed by zlib.
+                // 67: swf compressed by zlib.
                 signature = 1;
 
-                this.uncompressed = zlib.inflateSync(swf_buf.slice(8));
+                this.ddata = zlib.inflateSync(swf_buf.slice(8));
                 break;
             case 'Z':
-                // swf compressed by lzma.
+                // 90: swf compressed by lzma.
                 signature = 2;
 
-                this.uncompressed = lzma.decompress(swf_buf.slice(12));
+                this.ddata = lzma.decompress(swf_buf.slice(12));
                 break;
             default:
-                exit('not a swf file!');
+                exit('not a swf file - Signature Fail!');
         }
 
-        if (strfcc(swf_buf[1]) !== 'W' && strfcc(swf_buf[2]) !== 'S') {
-            exit('not a swf file!');
-        }
+
 
         this.signature = signature;
         this.version = swf_buf.readInt8(3);
+
+        // If FWS signature, the FileLength field should exactly match the file size.
+        // If CWS signature, the FileLength field indicates the total length of the file
+        // after decompression, and thus generally does not match the file size.
         this.filelength = swf_buf.readUInt32LE(4);
-        this.fwsBuffer = Buffer.concat([this.buffer.slice(0, 8), this.uncompressed]); // FWS Buffer.
+        this.fwsBuffer = Buffer.concat([this.buffer.slice(0, 8), this.ddata]); // FWS Buffer.
 
     },
     _check: function () {
@@ -102,7 +107,7 @@ Swf.prototype = {
         };
         var options = {
             'signature': swf_formats[mode] || 0,
-            'level': level || 7
+            'level': level || this.level
         };
         var sign = options.signature;
         var output;
@@ -116,9 +121,11 @@ Swf.prototype = {
                 break;
             case 1:
                 headers[0] = 'C'.charCodeAt(0);
-                output = Buffer.concat([headers, zlib.deflateSync(this.uncompressed, {finishFlush: zlib.Z_SYNC_FLUSH})]);
+                output = Buffer.concat([headers, zlib.deflateSync(this.ddata)]);
                 break;
             case 2:
+                var zdata = new Buffer(lzma.compress(this.ddata, options.level));
+                var zsize = zdata.length - 5; // 5 accounts lzma props.
                 /*
                  * Format of LZMA SWF
                  *
@@ -133,18 +140,14 @@ Swf.prototype = {
                  *
                  * compressedLen does not include header (4+4+4 bytes) or lzma props (5
                  * bytes) compressedLen does include LZMA end marker (6 bytes);
-                 *
                  */
-                headers = this.fwsBuffer.slice(0, 12); // copy header.
-                headers[0] = 'Z'.charCodeAt(0);
-                headers[3] = headers[3] > 13 ? headers[3] : 13;
-                headers.writeUInt32LE(this.fwsBuffer.length + 8, 4);
+                headers = this.buffer.slice(0, 12); // copy header.
+                headers[0] = 'Z'.charCodeAt(0); // LZMA Format
+                headers[3] = headers[3] > 13 ? headers[3] : 13; // version
+                headers.writeUInt32LE(this.filelength, 4); // scriptLen
+                headers.writeUInt32LE(zsize, 8); // compressedLen
 
-                var lzmaBuffer = new Buffer(lzma.compress(this.uncompressed, this.lzma_mode));
-                var lzmaProps = lzmaBuffer.slice(0, 5);
-                headers.writeUInt32LE(lzmaBuffer.length - 13, 8);
-
-                output = Buffer.concat([headers, lzmaProps, lzmaBuffer.slice(13)]);
+                output = Buffer.concat([headers, zdata]);
                 break;
         }
 
