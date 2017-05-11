@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Huffman coding!!</title>
+
+    <script type="text/javascript" src="huffman.js"></script>
+
+    <script type="text/javascript">
+        var text = "abcdedceeeeedecceae";
+        var huffman = Huffman.treeFromText(text); // first we need to create the tree to make encoding/decoding
+        var encodedBit = huffman.encodeBitString(text); // will return the compressed version of text
+        var encoded = huffman.encode(text); // will return the compressed version of text
+        var decoded = huffman.decode(encoded); // will decode text to original version
+
+        console.log(huffman, encoded, decoded)
+    </script>
+</head>
+<body>
+
+</body>
+</html>
