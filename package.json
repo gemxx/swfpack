@@ -23,7 +23,5 @@
     "url": "https://github.com/gemxx/swfpack/issues"
   },
   "homepage": "https://github.com/gemxx/swfpack#readme",
-  "dependencies": {
-    "lzma": "^2.3.2"
-  }
+  "dependencies": {}
 }
