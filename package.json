@@ -23,7 +23,8 @@
     "url": "https://github.com/gemxx/swfpack/issues"
   },
   "homepage": "https://github.com/gemxx/swfpack#readme",
-  "dependencies": {
-    "eslint": "^4.18.2"
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^4.19.1"
   }
 }
